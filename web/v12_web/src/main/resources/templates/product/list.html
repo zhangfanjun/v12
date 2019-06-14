@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <title>list</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/uploadifive.css">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 col-md-offset-7">
+            <button type="button" class="btn btn-success" id="to-add">添加</button>
+            <button type="button" class="btn btn-danger" id="delAll">批量删除</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <table class="table table-hover">
+                <tr>
+                    <td><input type="checkbox" id="checkAll">全选</td>
+                    <td>商品类别</td>
+                    <td>名称</td>
+                    <td>价格</td>
+                    <td>图片</td>
+                    <td>卖点</td>
+                    <td>操作</td>
+                </tr>
+                <tr th:each="p:${page.list}">
+                    <td><input type="checkbox" class="checkOne" value="1" th:value="${p.id}"></td>
+                    <td th:text="${p.typeName}">商品类别</td>
+                    <td th:text="${p.name}">名称</td>
+                    <td th:text="${p.salePrice}">价格</td>
+                    <td><img th:src="${p.images}"></img></td>
+                    <td th:text="${p.salePoint}">卖点</td>
+                    <td>
+                        <button class="btn btn-success to-update" type="button" th:value="${p.id}">修改</button>
+                        <button class="btn btn-danger to-del" type="button" th:value="${p.id}">删除</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-md-5 col-md-offset-5">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li>
+                            <a href="#" aria-label="Previous"
+                               th:href="|product/page/${page.pageNum-1}/${page.pageSize}|" th:if="${page.pageNum>1}">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li th:each="num:${page.navigatepageNums}" th:class="${page.pageNum==num?'active':''}"><a
+                                href="#" th:text="${num}" th:href="|product/page/${num}/${page.pageSize}|">1</a></li>
+                        <li>
+                            <a href="#" aria-label="Next" th:href="|product/page/${page.pageNum+1}/${page.pageSize}|"
+                               th:if="${page.pageNum<page.pages}">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="addModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">商品添加</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="addForm" action="product/add" method="post">
+                    <div class="form-group">
+                        <label for="name" class="col-sm-2 control-label">商品名</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="name" placeholder="" name="product.name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="price" class="col-sm-2 control-label">售价</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="price" placeholder="" name="product.price">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="salePrice" class="col-sm-2 control-label">折扣价</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="salePrice" name="product.salePrice">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="file_upload" class="col-sm-2 control-label">图片</label>
+                        <div class="col-sm-10">
+                            <input type="file" name="file" id="file_upload"/><span id="info"></span>
+                            <!-- 图片回显-->
+                            <img id="to-image" src="" style="width:100px;height:100px;display: none;"/>
+                            <!-- 隐藏域保存后台需要的地址-->
+                            <input type="hidden" class="form-control" id="images" name="product.images">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="salePoint" class="col-sm-2 control-label">卖点</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="salePoint" name="product.salePoint">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="typeId" class="col-sm-2 control-label">商品类型</label>
+                        <div class="col-sm-10">
+                            <select class="form-control se">
+                                <option class="op" value="">--</option>
+                                <option class="op" value="1">数码</option>
+                            </select>
+                            <select id="typeId" name="product.typeId" class="form-control">
+                                <option class="pt" value="2">--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editor" class="col-sm-2 control-label">商品描述</label>
+                        <div class="col-sm-10">
+                            <div id="editor">
+                                <p>欢迎使用 <b>wangEditor</b> 富文本编辑器</p>
+                            </div>
+                            <input type="text" class="form-control" id="desc" name="desc">
+                        </div>
+                    </div>
+                    <input type="hidden" name="product.typeName" value="笔记本" id="typeName">
+                    <input type="hidden" name="product.flag" value="true" id="flag">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="add">添加</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+<script src="js/jquery.uploadifive.js"></script>
+<script src="https://unpkg.com/wangeditor@3.1.1/release/wangEditor.min.js"></script>
+
+
+<script type="text/javascript">
+    <!--    富文本框-->
+    var E = window.wangEditor;
+    var editor = new E('#editor');
+    // 自定义菜单配置
+    editor.customConfig.menus = [
+        'head',  // 标题
+        'bold',  // 粗体
+        'fontSize',  // 字号
+        'fontName',  // 字体
+        'italic',  // 斜体
+        'foreColor',  // 文字颜色
+        'backColor',  // 背景颜色
+        'justify',  // 对齐方式
+        'emoticon',  // 表情
+        'image',  // 插入图片
+    ];
+    editor.customConfig.uploadFileName = 'files'
+    // 配置服务器端地址
+    editor.customConfig.uploadImgServer = '/file/uploadW'
+    editor.create();
+
+    $(function () {
+        // 添加单击事件
+        $("#to-add").click(function () {
+            $('#addModal').modal({
+                backdrop: "static",
+                keyboard: true
+            });
+
+
+        })
+        //提交添加表单
+        $("#add").click(function () {
+            var desc = editor.text.html();
+            $("#desc").val(desc);
+            $("#addForm").submit();
+        })
+        //修改
+        $(".to-update").click(function () {
+            var id = $(this).attr("value");
+            $.ajax({
+                url: "product/getById/" + id,
+                type: "POST",
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#name").val("name");
+                        $("#price").val("name");
+                        $("#salePrice").val("name");
+                        $("#images").val("name");
+                        $("#salePoint").val("name");
+                        $("#desc").val("name");
+                        $("#flag").val("name");
+                        $("#typeName").val("name");
+
+                    }
+                    $('#addModal').modal({
+                        backdrop: "static",
+                        keyboard: true
+                    });
+                }
+
+            })
+        })
+        //单个删除
+        $(".to-del").click(function () {
+            confirm("是否确定删除？删除之后，数据不可恢复！");
+            var id = $(this).attr("value");
+            $.ajax({
+                url: "product/del/" + id,
+                type: "POST",
+                success: function (data) {
+                    if (data.status == 200) {
+                        alert(data.info);
+                        location.reload();
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            })
+        })
+        //全选
+        $("#checkAll").click(function () {
+            $(".checkOne").prop("checked", $(this).prop("checked"));
+        })
+        //单选
+        $(".checkOne").click(function () {
+            $("#checkAll").prop("checked", $(".checkOne").length == $(".checkOne:checked").length);
+        })
+        //批量删除
+        $("#delAll").click(function () {
+            //以下写法只能获取第一值
+            // var list=$(".checkOne:checked").attr("value")
+            var all = $(".checkOne:checked");
+            if (all.length > 0) {
+                if (confirm("是否确定删除？删除之后，数据不可恢复！")) {
+                    var list = [];
+                    //下标从0开始
+                    for (var i = 0; i < all.length; i++) {
+                        list.push(all[i].value);
+                    }
+                    $.ajax({
+                        url: "product/delAll?list=" + list,
+                        type: "POST",
+                        success: function (data) {
+                            if (data.status == 200) {
+                                alert(data.info);
+                                location.reload();
+                            } else {
+                                alert(data.info);
+                            }
+                        }
+                    })
+                }
+            }
+        })
+        //   下拉列表
+        $(".se").blur(function () {
+            var v = $(".op:selected").attr("value");
+            var h = $("#typeId").html() + "<option class='pt' value='" + 2 + "'>" + "笔记本" + "</option>";
+            $("#typeId").html(h);
+
+            $.ajax({
+                url: "productType/getType/" + v,
+                type: "POST",
+                success: function (data) {
+                    if (data.status == 200) {
+                        for (var i = 0; i < data.info.length; i++) {
+                            var h = $("#typeId").html() + "<option class='pt' value='" + data.info[i].id + "'>" + data.info[i].name + "</option>";
+                            $("#typeId").html(h);
+                        }
+                    } else {
+                        var h = $("#typeId").html() + "<option class='pt' value='" + 2 + "'>" + "笔记本" + "</option>";
+                        $("#typeId").html(h);
+                    }
+                }
+            })
+        })
+        //图片上传
+        $('#file_upload').uploadifive({
+            'uploadScript': 'file/upload',
+            'buttonText': '上传',
+            'fileObjName': 'file',
+            'onUploadComplete': function (file, data) {
+                var image = JSON.parse(data);
+                if (image.status == 200) {
+                    $("#to-image").attr("src", image.info).show();
+                    $("#images").val(image.info);
+                } else {
+                    $("#info").text(image.info);
+                }
+            }
+        });
+
+    })
+</script>
+</body>
+</html>
+</html>
