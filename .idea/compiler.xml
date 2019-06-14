@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="entity" />
+        <module name="v12_index" />
         <module name="index" />
         <module name="generator_mapper" />
         <module name="v12_service" />
@@ -29,6 +30,7 @@
       <module name="get_mapper" options="-parameters" />
       <module name="index" options="-parameters" />
       <module name="mapper" options="-parameters" />
+      <module name="v12_index" options="-parameters" />
       <module name="v12_product_type" options="-parameters" />
       <module name="v12_service" options="-parameters" />
       <module name="v12_web" options="-parameters" />

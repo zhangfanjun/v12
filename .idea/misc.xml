@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/generator_mapper/pom.xml" />
         <option value="$PROJECT_DIR$/service/v12_service/pom.xml" />
         <option value="$PROJECT_DIR$/web/v12_web/pom.xml" />
+        <option value="$PROJECT_DIR$/web/v12_index/pom.xml" />
       </list>
     </option>
   </component>
