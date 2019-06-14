@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="v12_service" />
         <module name="entity" />
         <module name="v12_index" />
         <module name="index" />
         <module name="generator_mapper" />
-        <module name="v12_service" />
         <module name="v12_product_api" />
         <module name="mapper" />
         <module name="service" />

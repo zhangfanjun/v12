@@ -1,4 +1,4 @@
-package com.qf.v12_index.controller;
+package com.qf.v12_web.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.qf.entity.TProductType;
@@ -12,19 +12,23 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
-@RequestMapping("index")
+@RequestMapping("product")
 public class ProductTypeController {
     @Reference
     private IProductTypeService service;
 
-    @RequestMapping("getType")
+    @RequestMapping("getType/{id}")
     @ResponseBody
-    public List<TProductType> getType() {
-        List<TProductType> list = service.getList();
-
-        return list;
+    public ResultBean getType(@PathVariable Long id) {
+        List<TProductType> byPid = service.getByPid(id);
+        if(byPid!=null){
+            ResultBean result = new ResultBean(200, byPid);
+            return result;
+        }else{
+            ResultBean result = new ResultBean(404, byPid);
+            return result;
+        }
 
     }
-
 
 }
